@@ -97,49 +97,71 @@ class QuizGame:
         else:
             print(f"현재 최고 점수: {self.best_score}점")
 
-    def add_quiz(self):
-        """문제, 보기 4개, 정답을 입력받아 새 퀴즈를 등록한다."""
-        print("\n=== 퀴즈 등록 ===")
-        question = input("문제: ").strip()
-        while not question:
-            print("문제 내용을 입력하세요.")
-            question = input("문제: ").strip()
+    def input_number(self, message, minimum, maximum):
+        while True:
+            value = input(message).strip()
 
-        options = []
-        for option_number in range(1, 5):
-            option = input(f"보기 {option_number}: ").strip()
-            while not option:
-                print("보기 내용을 입력하세요.")
-                option = input(f"보기 {option_number}: ").strip()
-            options.append(option)
+            if not value.isdigit():
+                print("숫자를 입력하세요.")
+                continue
+
+            number = int(value)
+
+            if minimum <= number <= maximum:
+                return number
+
+            print(f"{minimum}~{maximum} 사이의 숫자를 입력하세요.")
+
+    def add_quiz(self):
+        print("\n=== 퀴즈 추가 ===")
 
         while True:
-            answer = input("정답 번호(1~4): ").strip()
-            if answer in {"1", "2", "3", "4"}:
-                break
-            print("1~4 사이의 숫자를 입력하세요.")
+            question = input("문제를 입력하세요: ").strip()
 
-        self.quizzes.append(
-            {
-                "question": question,
-                "options": options,
-                "answer": int(answer),
-            }
-        )
-        print("퀴즈가 등록되었습니다.")
+            if question:
+                break
+
+            print("문제를 입력해야 합니다.")
+
+        options = []
+
+        for option_number in range(1, 5):
+            while True:
+                option = input(f"선택지 {option_number}: ").strip()
+
+                if option:
+                    options.append(option)
+                    break
+
+                print("선택지를 입력해야 합니다.")
+
+        answer = self.input_number("정답 번호(1~4): ", 1, 4)
+
+        quiz = {
+            "question": question,
+            "options": options,
+            "answer": answer,
+        }
+
+        self.quizzes.append(quiz)
+
+        print("퀴즈가 추가되었습니다.")
+
 
     def show_quiz_list(self):
-        """등록된 퀴즈를 등록 순서대로 보여 준다."""
-        if not self.quizzes:
-            print("등록된 퀴즈가 없습니다.")
+        """등록된 퀴즈의 문제를 번호와 함께 출력한다."""
+        total_count = len(self.quizzes)
+
+        print(f"\n등록된 퀴즈 목록: 총 {total_count}개")
+
+        if total_count == 0:
+            print("\n등록된 퀴즈가 없습니다.")
             return
 
-        print("\n=== 등록된 퀴즈 ===")
+        print()
+
         for question_number, quiz in enumerate(self.quizzes, start=1):
-            print(f"\n{question_number}. {quiz['question']}")
-            for option_number, option in enumerate(quiz["options"], start=1):
-                print(f"   {option_number}) {option}")
-            print(f"   정답: {quiz['answer']}번")
+            print(f"[{question_number}] {quiz['question']}")
 
     def show_best_score(self):
         print(f"현재 최고 점수는 {self.best_score}점입니다.")
